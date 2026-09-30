@@ -6,11 +6,12 @@ const ctx = canvas.getContext('2d');
 
 // On définit les propriétés de notre personnage
 const player = {
-    x: 400, // Position horizontale (au milieu du canvas de 800px)
-    y: 300, // Position verticale (au milieu du canvas de 600px)
-    size: 30, // Taille approximative de l'émoji
-    speed: 5, // Vitesse de déplacement du personnage
-    emoji: "🧍" // L'apparence de notre personnage
+    x: 400, // Position horizontale au centre
+    y: 300, // Position verticale au centre
+    radius: 15, // Rayon de notre cercle (remplace la taille de l'émoji)
+    speed: 5, // Vitesse de déplacement
+    color: "#ff4d4d", // Rouge clair pour le corps
+    direction: 'down' // Direction initiale vers laquelle il regarde
 };
 
 // On garde une trace des touches du clavier actuellement pressées
@@ -25,15 +26,18 @@ const keys = {
 
 // Quand on appuie sur une touche
 window.addEventListener('keydown', (event) => {
-    // Si la touche pressée fait partie de notre objet 'keys', on dit qu'elle est enfoncée (true)
     if (keys.hasOwnProperty(event.key)) {
         keys[event.key] = true;
+        // On met à jour la direction selon la touche pressée
+        if (event.key === 'ArrowUp') player.direction = 'up';
+        if (event.key === 'ArrowDown') player.direction = 'down';
+        if (event.key === 'ArrowLeft') player.direction = 'left';
+        if (event.key === 'ArrowRight') player.direction = 'right';
     }
 });
 
 // Quand on relâche une touche
 window.addEventListener('keyup', (event) => {
-    // On dit que la touche n'est plus enfoncée (false)
     if (keys.hasOwnProperty(event.key)) {
         keys[event.key] = false;
     }
@@ -45,42 +49,79 @@ window.addEventListener('keyup', (event) => {
 function gameLoop() {
     // 1. MISE À JOUR DE LA POSITION
 
-    // Si on appuie sur la flèche du HAUT et que le personnage ne dépasse pas le haut du canvas (0)
-    if (keys.ArrowUp && player.y - player.size > 0) {
-        player.y -= player.speed; // On monte (y diminue)
+    // Pour ne pas sortir du canvas, on prend en compte le rayon (radius) du cercle
+    // au lieu de la taille de l'émoji
+
+    // Haut
+    if (keys.ArrowUp && player.y - player.radius > 0) {
+        player.y -= player.speed;
+        player.direction = 'up'; // Met à jour la direction en continu si maintenu
     }
-    // Si on appuie sur la flèche du BAS et que le personnage ne dépasse pas le bas du canvas (600)
-    // On ajoute 'player.size' car l'émoji est dessiné depuis son coin en bas à gauche par défaut avec la font
-    if (keys.ArrowDown && player.y < canvas.height) {
-        player.y += player.speed; // On descend (y augmente)
+    // Bas
+    if (keys.ArrowDown && player.y + player.radius < canvas.height) {
+        player.y += player.speed;
+        player.direction = 'down';
     }
-    // Si on appuie sur la flèche de GAUCHE et que le personnage ne dépasse pas la gauche du canvas (0)
-    // On soustrait 'player.size' pour ne pas que sa tête dépasse à gauche
-    if (keys.ArrowLeft && player.x - player.size / 2 > 0) {
-        player.x -= player.speed; // On va à gauche (x diminue)
+    // Gauche
+    if (keys.ArrowLeft && player.x - player.radius > 0) {
+        player.x -= player.speed;
+        player.direction = 'left';
     }
-    // Si on appuie sur la flèche de DROITE et que le personnage ne dépasse pas la droite du canvas (800)
-    if (keys.ArrowRight && player.x + player.size / 2 < canvas.width) {
-        player.x += player.speed; // On va à droite (x augmente)
+    // Droite
+    if (keys.ArrowRight && player.x + player.radius < canvas.width) {
+        player.x += player.speed;
+        player.direction = 'right';
     }
 
     // 2. DESSIN À L'ÉCRAN
 
-    // On efface tout le canvas avant de redessiner à la nouvelle position.
-    // Sinon, le personnage laisserait une trace derrière lui !
+    // On efface tout le canvas avant de redessiner
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // On dessine l'émoji
-    ctx.font = `${player.size}px Arial`; // On définit la taille et la police
-    ctx.textAlign = "center"; // On centre le texte horizontalement sur 'x'
-    ctx.fillText(player.emoji, player.x, player.y); // On dessine l'émoji aux coordonnées x et y
+    // Dessin du corps (un cercle)
+    ctx.beginPath(); // On commence un nouveau tracé
+    // arc(x, y, rayon, angle_debut, angle_fin) crée un cercle complet
+    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+    ctx.fillStyle = player.color; // Couleur de remplissage
+    ctx.fill(); // On remplit le cercle
+    ctx.closePath(); // On ferme le tracé
+
+    // Dessin des yeux (deux petits cercles noirs)
+    ctx.fillStyle = "black";
+    const eyeRadius = 3; // Taille des yeux
+    let eyeOffsetX1 = 0, eyeOffsetY1 = 0; // Position relative de l'oeil 1
+    let eyeOffsetX2 = 0, eyeOffsetY2 = 0; // Position relative de l'oeil 2
+
+    // On positionne les yeux selon la direction
+    if (player.direction === 'up') {
+        eyeOffsetX1 = -5; eyeOffsetY1 = -7;
+        eyeOffsetX2 = 5;  eyeOffsetY2 = -7;
+    } else if (player.direction === 'down') {
+        eyeOffsetX1 = -5; eyeOffsetY1 = 7;
+        eyeOffsetX2 = 5;  eyeOffsetY2 = 7;
+    } else if (player.direction === 'left') {
+        eyeOffsetX1 = -7; eyeOffsetY1 = -5;
+        eyeOffsetX2 = -7; eyeOffsetY2 = 5;
+    } else if (player.direction === 'right') {
+        eyeOffsetX1 = 7; eyeOffsetY1 = -5;
+        eyeOffsetX2 = 7; eyeOffsetY2 = 5;
+    }
+
+    // Oeil 1
+    ctx.beginPath();
+    ctx.arc(player.x + eyeOffsetX1, player.y + eyeOffsetY1, eyeRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+
+    // Oeil 2
+    ctx.beginPath();
+    ctx.arc(player.x + eyeOffsetX2, player.y + eyeOffsetY2, eyeRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
 
     // 3. BOUCLE
-
-    // On demande au navigateur d'appeler 'gameLoop' à nouveau à la prochaine image (frame)
-    // C'est ce qui crée l'animation fluide !
     requestAnimationFrame(gameLoop);
 }
 
-// On lance la boucle de jeu pour la première fois pour démarrer
+// On lance la boucle de jeu pour la première fois
 gameLoop();
