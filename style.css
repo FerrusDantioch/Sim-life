@@ -1,0 +1,29 @@
+/* Ce bloc cible la page entière (le corps du document) */
+body {
+    /* Fond d'écran gris clair */
+    background-color: #f0f0f0;
+
+    /* On utilise flexbox pour centrer facilement le contenu de la page */
+    display: flex;
+    flex-direction: column; /* Le titre au-dessus du canvas */
+    align-items: center;    /* Centre horizontalement */
+
+    /* On utilise une police d'écriture par défaut du système pour que ce soit propre */
+    font-family: sans-serif;
+
+    /* On enlève la marge par défaut pour éviter des espaces non désirés */
+    margin: 0;
+    padding-top: 20px;
+}
+
+/* Ce bloc cible spécifiquement notre canvas (la zone de jeu) */
+canvas {
+    /* Couleur de fond vert herbe */
+    background-color: #78d64b;
+
+    /* On arrondit les coins du canvas */
+    border-radius: 15px;
+
+    /* On ajoute une petite ombre portée pour donner un effet de profondeur */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
