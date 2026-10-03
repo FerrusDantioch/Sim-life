@@ -3,7 +3,8 @@
 <head>
     <!-- Méta-données de base pour le navigateur -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Paramètre essentiel pour éviter le zoom intempestif sur mobile lors des tapotements -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <!-- Le titre qui s'affiche dans l'onglet du navigateur -->
     <title>Sim life</title>
@@ -18,6 +19,24 @@
     <!-- Le canvas est la zone où nous allons dessiner notre jeu.
          Il a une largeur (width) de 800 pixels et une hauteur (height) de 600 pixels. -->
     <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <!-- Zone pour les contrôles sur écran (téléphones/tablettes) -->
+    <div id="controls-container">
+        <!-- Croix directionnelle -->
+        <div id="dpad">
+            <button id="btn-up" class="control-btn dpad-btn">⬆️</button>
+            <div class="dpad-middle">
+                <button id="btn-left" class="control-btn dpad-btn">⬅️</button>
+                <button id="btn-right" class="control-btn dpad-btn">➡️</button>
+            </div>
+            <button id="btn-down" class="control-btn dpad-btn">⬇️</button>
+        </div>
+
+        <!-- Bouton d'action -->
+        <div id="action-buttons">
+            <button id="btn-action" class="control-btn action-btn">Action 🖐️</button>
+        </div>
+    </div>
 
     <!-- On relie notre fichier de logique (JavaScript) à notre page HTML.
          On le place à la fin du 'body' pour s'assurer que la page a fini de charger avant de lancer le jeu. -->

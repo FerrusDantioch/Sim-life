@@ -13,7 +13,11 @@ body {
 
     /* On enlève la marge par défaut pour éviter des espaces non désirés */
     margin: 0;
-    padding-top: 20px;
+    padding-top: 10px;
+
+    /* Empêcher la sélection de texte sur la page (utile pour le mobile) */
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* Ce bloc cible spécifiquement notre canvas (la zone de jeu) */
@@ -26,4 +30,62 @@ canvas {
 
     /* On ajoute une petite ombre portée pour donner un effet de profondeur */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+    /* Rendre le canvas responsive sur les petits écrans */
+    max-width: 95vw;
+    height: auto;
+}
+
+/* --- CONTRÔLES SUR ÉCRAN --- */
+
+#controls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px; /* Même largeur que le canvas */
+    margin-top: 15px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* Styles communs pour tous les boutons */
+.control-btn {
+    background-color: white;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+    /* Empêche le double-tap de zoomer sur iOS */
+    touch-action: manipulation;
+}
+
+/* Effet quand on appuie sur un bouton */
+.control-btn:active, .control-btn.active {
+    background-color: #e0e0e0;
+    transform: translateY(2px);
+    box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
+}
+
+/* Mise en page de la croix directionnelle */
+#dpad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.dpad-middle {
+    display: flex;
+    gap: 40px; /* Espace au centre de la croix */
+}
+
+/* Bouton d'action spécifique */
+.action-btn {
+    font-weight: bold;
+    color: #333;
+    padding: 15px 25px;
+    border-color: #888;
 }
